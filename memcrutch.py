@@ -3,10 +3,6 @@ import tkinter as tk
 from tkhtmlview import HTMLLabel
 import local_search
 
-# Settings
-SEARCH_QUERY_KEYBOARD_SHORTCUT = '<Command-Shift-KeyPress-F>'
-SEARCH_QUERY_KEYBOARD_SHORTCUT_HELP_TEXT = 'Command+Shift+F>'
-
 
 class NoteSearchWindow(tkinter.Frame):
     """
@@ -23,12 +19,11 @@ class NoteSearchWindow(tkinter.Frame):
         self.result_box = HTMLLabel(
             self,
             width='1',
-            html=f'<h1>Press {SEARCH_QUERY_KEYBOARD_SHORTCUT_HELP_TEXT} to enter your search query</h1>')
+            html=f'<h1>This window will display the result of your search query</h1>')
 
         self.pack(fill=tkinter.BOTH, expand=1)
 
     def search_query_callback(self, event):
-        print(f'search query callback called! {event}')
         query_box = tkinter.Toplevel(self)
         query_box.geometry("400x50")
         query_box.bind('<KeyPress-Escape>', lambda event: query_box.destroy())
@@ -46,18 +41,20 @@ class NoteSearchWindow(tkinter.Frame):
     def search_notes(self, query_text):
         results = local_search.search_notes(query_text)
 
-        # Display results
+        # Display first result
         # TODO: cycle through search results
-        if not results:
-            self.result_box.set_html('No result found')
-            self.result_box.pack(fill=tkinter.BOTH, expand=1)
-            self.result_box.fit_height()
-
+        got_result = False
         for first_result in results:
             self.result_box.set_html(first_result.html)
-            self.result_box.pack(fill=tkinter.BOTH, expand=1)
-            self.result_box.fit_height()
+            got_result = True
             break
+
+        if not got_result:
+            self.result_box.set_html('No result found')
+
+        self.result_box.pack(fill=tkinter.BOTH, expand=1)
+        self.result_box.fit_height()
+        self.master.attributes('-topmost', True)
 
 
 if __name__ == '__main__':
@@ -65,10 +62,10 @@ if __name__ == '__main__':
     root = tk.Tk()
     root.title('Memcrutch')
     root.geometry('400x400')
-    root.attributes('-alpha', 0.6)
-    root.attributes('-topmost', True)
-    # root.withdraw()
+    root.attributes('-alpha', 0.8)
 
     app = NoteSearchWindow(root)
-    root.bind(SEARCH_QUERY_KEYBOARD_SHORTCUT, app.search_query_callback)
+    # The app now will be called by a 'launcher' app when the search shortcut is pressed,
+    # so we can assume that the search callback already needs to be called
+    app.search_query_callback(None)
     tk.mainloop()
