@@ -54,6 +54,7 @@ class NoteSearchWindow(tkinter.Frame):
 
         self.result_box.pack(fill=tkinter.BOTH, expand=1)
         self.result_box.fit_height()
+        self.master.attributes('-topmost', True)
 
 
 if __name__ == '__main__':
@@ -62,7 +63,6 @@ if __name__ == '__main__':
     root.title('Memcrutch')
     root.geometry('400x400')
     root.attributes('-alpha', 0.8)
-    root.attributes('-topmost', True)
 
     app = NoteSearchWindow(root)
     # The app now will be called by a 'launcher' app when the search shortcut is pressed,
