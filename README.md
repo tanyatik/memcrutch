@@ -15,8 +15,21 @@ virtualenv venv
 . venv/bin/activate
 
 # Installing dependencies
-python3 -m pip install tk md2html tkhtmlview pillow requests markdown2 pyyaml pygments markdown2
+brew install python-tk
+python3 -m pip install tk md2html pillow requests markdown2 pyyaml pygments markdown2 tkhtmlview
 
 # Running app
 python3 memcrutch.py
 ```
+
+### Building a Mac app
+
+```
+# Installing dependencies
+python3 -m pip install py2app
+
+# Building app
+python3 setup.py py2app
+
+# Run the app
+./dist/memcrutch.app/Contents/MacOS/memcrutch
