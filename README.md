@@ -5,6 +5,8 @@ and other details of your work you tend to forget, by allowing to search through
 
 ### How to run
 
+First, change the constant in https://github.com/tanyatik/memcrutch/blob/main/local_search.py#L8 
+
 To run, do this:
 
 ```
