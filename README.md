@@ -5,7 +5,7 @@ and other details of your work you tend to forget, by allowing to search through
 
 ### How to run
 
-First, change the constant in https://github.com/tanyatik/memcrutch/blob/main/local_search.py#L8 
+First, change the constant in https://github.com/tanyatik/memcrutch/blob/main/local_search.py#L8
 
 To run, do this:
 
@@ -15,7 +15,7 @@ virtualenv venv
 . venv/bin/activate
 
 # Installing dependencies
-python3 -m pip install tkhtmlview markdown2
+python3 -m pip install tk md2html tkhtmlview pillow requests markdown2 pyyaml pygments markdown2
 
 # Running app
 python3 memcrutch.py
