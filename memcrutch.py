@@ -63,7 +63,7 @@ class NoteSearchWindow(tkinter.Frame):
 if __name__ == '__main__':
     # Set up root window
     root = tk.Tk()
-    root.title('Overlapp')
+    root.title('Memcrutch')
     root.geometry('400x400')
     root.attributes('-alpha', 0.6)
     root.attributes('-topmost', True)
