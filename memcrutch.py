@@ -1,7 +1,10 @@
 import tkinter
 import tkinter as tk
 from tkhtmlview import HTMLLabel
+from typing import Optional
+
 import local_search
+from carousel_iterator import CarouselIterator
 
 
 class NoteSearchWindow(tkinter.Frame):
@@ -40,20 +43,31 @@ class NoteSearchWindow(tkinter.Frame):
 
     def search_notes(self, query_text):
         results = local_search.search_notes(query_text)
+        results_carousel = CarouselIterator(results)
 
-        # Display first result
-        # TODO: cycle through search results
-        got_result = False
-        for first_result in results:
-            self.result_box.set_html(first_result.html)
-            got_result = True
-            break
+        def display_result():
+            try:
+                search_result = results_carousel.current()
+                self.result_box.set_html(search_result.html)
+            except StopIteration as e:
+                self.result_box.set_html('No result found')
+            self.result_box.pack(fill=tkinter.BOTH, expand=1)
+            self.result_box.fit_height()
 
-        if not got_result:
-            self.result_box.set_html('No result found')
+        def display_previous_result():
+            results_carousel.previous()
+            display_result()
 
-        self.result_box.pack(fill=tkinter.BOTH, expand=1)
-        self.result_box.fit_height()
+        def display_next_result():
+            results_carousel.next()
+            display_result()
+
+        display_result()
+        previous_button = tk.Button(self.master, text="Previous", command=display_previous_result)
+        previous_button.pack(side=tkinter.LEFT)
+        next_button = tk.Button(self.master, text="Next", command=display_next_result)
+        next_button.pack(side=tkinter.RIGHT)
+
         self.master.attributes('-topmost', True)
 
 
