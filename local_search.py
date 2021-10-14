@@ -23,7 +23,7 @@ class FormattedSearchResult:
 
 
 def format_search_result(search_result: SearchResult) -> FormattedSearchResult:
-    return FormattedSearchResult(filename=search_result.filename, html=markdown2.markdown(search_result.markdown).encode())
+    return FormattedSearchResult(filename=search_result.filename, html=markdown2.markdown(search_result.markdown))
 
 
 def grep_search_results_iterator(search_process_stdout) -> Iterable[SearchResult]:
@@ -81,7 +81,7 @@ def search_notes(query: str) -> Iterable[FormattedSearchResult]:
     grep_process = subprocess.run(grep_command, capture_output=True)
     search_result = grep_process.stdout
 
-    for search_result in grep_search_results_iterator(search_result):
+    for search_result in grep_search_results_iterator(search_result.decode('utf-8')):
         if not search_result:
             return
 
