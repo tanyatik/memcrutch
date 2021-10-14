@@ -46,7 +46,7 @@ def grep_search_results_iterator(search_process_stdout) -> Iterable[SearchResult
 
     # Lines with -- in them need to be skipped
 
-    previous_filename = None
+    previous_filename = b''
     previous_text = b''
     for line in search_process_stdout.split(b'\n'):
         if not line or not line.strip():
@@ -59,7 +59,7 @@ def grep_search_results_iterator(search_process_stdout) -> Iterable[SearchResult
         filename = re.search(regex, line, flags=re.MULTILINE).group(1)
 
         # Results corresponding to the same filename as previous result are added to the previous result
-        if filename == previous_filename or previous_filename is None:
+        if filename == previous_filename or not previous_filename:
             previous_text += b'\n' + text
         else:
             yield SearchResult(filename=previous_filename.decode(), markdown=previous_text)
@@ -67,7 +67,8 @@ def grep_search_results_iterator(search_process_stdout) -> Iterable[SearchResult
 
         previous_filename = filename
 
-    yield SearchResult(filename=previous_filename.decode(), markdown=previous_text)
+    if previous_text:
+        yield SearchResult(filename=previous_filename.decode(), markdown=previous_text)
     return
 
 
@@ -85,6 +86,7 @@ def search_notes(query) -> Iterable[FormattedSearchResult]:
         if not search_result:
             return
 
+        print(search_result)
         formatted_search_result = format_search_result(search_result)
 
         # Highlight query in the resulting text (modifying the HTML)
