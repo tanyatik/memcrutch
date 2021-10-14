@@ -86,7 +86,6 @@ def search_notes(query) -> Iterable[FormattedSearchResult]:
         if not search_result:
             return
 
-        print(search_result)
         formatted_search_result = format_search_result(search_result)
 
         # Highlight query in the resulting text (modifying the HTML)
