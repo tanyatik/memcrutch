@@ -13,7 +13,7 @@ HIGHLIGHT_BACKGROUND_COLOR = '#FFFF00'
 @dataclass
 class SearchResult:
     filename: str
-    markdown: bytes
+    markdown: str
 
 
 @dataclass
@@ -23,7 +23,7 @@ class FormattedSearchResult:
 
 
 def format_search_result(search_result: SearchResult) -> FormattedSearchResult:
-    return FormattedSearchResult(filename=search_result.filename, html=markdown2.markdown(search_result.markdown))
+    return FormattedSearchResult(filename=search_result.filename, html=markdown2.markdown(search_result.markdown).encode())
 
 
 def grep_search_results_iterator(search_process_stdout) -> Iterable[SearchResult]:
@@ -46,35 +46,35 @@ def grep_search_results_iterator(search_process_stdout) -> Iterable[SearchResult
 
     # Lines with -- in them need to be skipped
 
-    previous_filename = None
-    previous_text = b''
-    for line in search_process_stdout.split(b'\n'):
+    previous_filename = ''
+    previous_text = ''
+    for line in search_process_stdout.split('\n'):
         if not line or not line.strip():
             continue
-        if line == b'--':
+        if line == '--':
             continue
 
-        regex = rb'^([a-zA-Z0-9/._]+)[-:]'
-        text = re.sub(regex, b'', line, flags=re.MULTILINE)
+        regex = r'^([a-zA-Z0-9/._]+)[-:]'
+        text = re.sub(regex, '', line, flags=re.MULTILINE)
         filename = re.search(regex, line, flags=re.MULTILINE).group(1)
 
         # Results corresponding to the same filename as previous result are added to the previous result
-        if filename == previous_filename or previous_filename is None:
-            previous_text += b'\n' + text
+        if filename == previous_filename or not previous_filename:
+            previous_text += '\n' + text
         else:
-            yield SearchResult(filename=previous_filename.decode(), markdown=previous_text)
+            yield SearchResult(filename=previous_filename, markdown=previous_text)
             previous_text = text
 
         previous_filename = filename
 
-    yield SearchResult(filename=previous_filename.decode(), markdown=previous_text)
+    if previous_text:
+        yield SearchResult(filename=previous_filename, markdown=previous_text)
     return
 
 
-def search_notes(query) -> Iterable[FormattedSearchResult]:
+def search_notes(query: str) -> Iterable[FormattedSearchResult]:
     """
     Search notes saved in a local filesystem and return result formatted in HTML.
-    Search term
     """
     grep_command = ['grep', '-i', '-I', '-r', '-A', str(SEARCH_CONTEXT_LINES_AFTER), '-B',
                     str(SEARCH_CONTEXT_LINES_BEFORE), query, NOTES_DIRECTORY]
