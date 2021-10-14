@@ -1,7 +1,6 @@
 import tkinter
 import tkinter as tk
 from tkhtmlview import HTMLLabel
-from typing import Optional
 
 import local_search
 from carousel_iterator import CarouselIterator
@@ -55,11 +54,19 @@ class NoteSearchWindow(tkinter.Frame):
             self.result_box.fit_height()
 
         def display_previous_result():
-            results_carousel.previous()
+            try:
+                results_carousel.previous()
+            except StopIteration:
+                # TODO: grey out the button
+                pass
             display_result()
 
         def display_next_result():
-            results_carousel.next()
+            try:
+                results_carousel.next()
+            except StopIteration:
+                # TODO: grey out the button
+                pass
             display_result()
 
         display_result()
